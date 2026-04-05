@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Tking Head</title>
+
+<style>
+
+body{
+background:black;
+font-family:Arial;
+color:white;
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.box{
+
+width:360px;
+
+padding:25px;
+
+border-radius:25px;
+
+background:#020202;
+
+box-shadow:0 0 40px #00ffd5;
+
+}
+
+h2{
+
+text-align:center;
+
+color:#00ffd5;
+
+}
+
+/* input */
+
+input,button{
+
+width:100%;
+
+padding:12px;
+
+border:none;
+
+border-radius:12px;
+
+margin-bottom:10px;
+
+}
+
+/* button */
+
+button{
+
+background:#00ffd5;
+
+font-weight:bold;
+
+}
+
+.getkey{
+
+background:black;
+
+border:1px solid #00ffd5;
+
+color:#00ffd5;
+
+}
+
+/* toggle */
+
+.toggle{
+
+display:flex;
+
+justify-content:space-between;
+
+margin:12px 0;
+
+}
+
+/* ios switch */
+
+.switch{
+
+position:relative;
+
+width:50px;
+
+height:25px;
+
+}
+
+.switch input{display:none}
+
+.slider{
+
+position:absolute;
+
+top:0;
+
+left:0;
+
+right:0;
+
+bottom:0;
+
+background:#333;
+
+border-radius:25px;
+
+}
+
+.slider:before{
+
+content:"";
+
+position:absolute;
+
+height:19px;
+
+width:19px;
+
+left:3px;
+
+bottom:3px;
+
+background:white;
+
+border-radius:50%;
+
+transition:.4s;
+
+}
+
+input:checked+.slider{
+
+background:#00ffd5;
+
+}
+
+input:checked+.slider:before{
+
+transform:translateX(24px);
+
+}
+
+/* toast */
+
+.toast{
+
+position:fixed;
+
+top:20px;
+
+right:20px;
+
+background:#00ffd5;
+
+color:black;
+
+padding:12px 20px;
+
+border-radius:12px;
+
+opacity:0;
+
+transition:.4s;
+
+font-weight:bold;
+
+}
+
+.show{
+
+opacity:1;
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="box">
+
+<h2>Tking Head</h2>
+
+<div id="loginBox">
+
+<input id="keyInput" placeholder="Nhập key">
+
+<button onclick="login()">Đăng nhập</button>
+
+<button class="getkey" onclick="getKey24h()">Get Key 24h</button>
+
+</div>
+
+<div id="panel" style="display:none">
+
+<div class="toggle">Aimlock<label class="switch">
+<input type="checkbox" onchange="notify('Aimlock bật')">
+<span class="slider"></span>
+</label></div>
+
+<div class="toggle">Nhẹ tâm<label class="switch">
+<input type="checkbox" onchange="notify('Nhẹ tâm bật')">
+<span class="slider"></span>
+</label></div>
+
+<div class="toggle">Nhạy tâm<label class="switch">
+<input type="checkbox" onchange="notify('Nhạy tâm bật')">
+<span class="slider"></span>
+</label></div>
+
+<div class="toggle">Aimlock Head<label class="switch">
+<input type="checkbox" onchange="notify('Aimlock Head bật')">
+<span class="slider"></span>
+</label></div>
+
+<div class="toggle">Aim cổ nhẹ<label class="switch">
+<input type="checkbox" onchange="notify('Aim cổ nhẹ bật')">
+<span class="slider"></span>
+</label></div>
+
+<div class="toggle">Fix lag<label class="switch">
+<input type="checkbox" onchange="notify('Fix lag bật')">
+<span class="slider"></span>
+</label></div>
+
+<div class="toggle">Fix rung<label class="switch">
+<input type="checkbox" onchange="notify('Fix rung bật')">
+<span class="slider"></span>
+</label></div>
+
+<div class="toggle">Fix lố<label class="switch">
+<input type="checkbox" onchange="notify('Fix lố bật')">
+<span class="slider"></span>
+</label></div>
+
+<div class="toggle">Anti Check<label class="switch">
+<input type="checkbox" onchange="notify('Anti Check bật')">
+<span class="slider"></span>
+</label></div>
+
+<div class="toggle">Anti Band<label class="switch">
+<input type="checkbox" onchange="notify('Anti Band bật')">
+<span class="slider"></span>
+</label></div>
+
+<hr>
+
+<div id="device"></div>
+
+<div id="expire"></div>
+
+</div>
+
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+
+/* đọc key admin */
+
+function getAdminKeys(){
+
+return JSON.parse(localStorage.getItem("ADMIN_KEYS")||"[]")
+
+}
+
+/* đọc key 7day */
+
+function get7DayKeys(){
+
+return JSON.parse(localStorage.getItem("KEYS_7DAY")||"[]")
+
+}
+
+/* login */
+
+function login(){
+
+let key=keyInput.value
+
+if(getAdminKeys().includes(key)){
+
+startPanel("VIP")
+
+return
+
+}
+
+if(get7DayKeys().includes(key)){
+
+let exp=new Date()
+
+exp.setDate(exp.getDate()+7)
+
+startPanel(exp.toLocaleString())
+
+return
+
+}
+
+let k=localStorage.getItem("KEY24")
+
+if(k==key){
+
+startPanel(localStorage.getItem("KEY24_TIME"))
+
+return
+
+}
+
+notify("Sai key")
+
+}
+
+/* start panel */
+
+function startPanel(time){
+
+notify("Đăng nhập thành công")
+
+loginBox.style.display="none"
+
+panel.style.display="block"
+
+device.innerText="Thiết bị: TK"+Math.floor(Math.random()*999999999)
+
+if(time=="VIP")
+
+expire.innerText="Admin VIP không giới hạn"
+
+else
+
+expire.innerText="Hết hạn: "+time
+
+}
+
+/* key 24h */
+
+function getKey24h(){
+
+let key="TKing-Mod-"+Math.random().toString(36).substring(2,6).toUpperCase()
+
+let exp=new Date()
+
+exp.setHours(exp.getHours()+24)
+
+localStorage.setItem("KEY24",key)
+
+localStorage.setItem("KEY24_TIME",exp.toLocaleString())
+
+navigator.clipboard.writeText(key)
+
+notify("Key đã copy: "+key)
+
+}
+
+/* toast */
+
+function notify(text){
+
+toast.innerText=text
+
+toast.classList.add("show")
+
+setTimeout(()=>toast.classList.remove("show"),2000)
+
+}
+
+</script>
+
+</body>
+</html>
