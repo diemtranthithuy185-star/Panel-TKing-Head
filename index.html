@@ -3,38 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tking Head Panel</title>
-
+<title>Panel TKing Mod</title>
 <style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #111;
+        color: #fff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        flex-direction: column;
+    }
+    input, button {
+        padding: 10px;
+        margin: 5px;
+        border-radius: 5px;
+        border: none;
+    }
+    input { width: 250px; }
+    button { cursor: pointer; background: #28a745; color: #fff; }
+    #panel { display: none; margin-top: 20px; }
+</style>
+</head>
+<body>
 
-body{
-background:black;
-font-family:Arial;
-color:white;
-text-align:center;
+<h2>Đăng nhập Panel TKing</h2>
+<input type="text" id="keyInput" placeholder="Nhập key của bạn">
+<button onclick="login()">Đăng nhập</button>
+
+<div id="panel">
+    <h3>Chào mừng bạn đã vào panel!</h3>
+    <p id="keyInfo"></p>
+    <button onclick="getKey()">Get Key</button>
+</div>
+
+<script>
+// ==== CONFIG ====
+const ADMIN_KEY = "TKING-VIP49ANFQ"; // key vĩnh viễn
+const KEY_7DAY = "TKING-7DAY1234";    // key 7 ngày
+let expireDate = new Date();
+expireDate.setDate(expireDate.getDate() + 7); // key 7 ngày hôm nay + 7 ngày
+
+// ==== LOGIN FUNCTION ====
+function login() {
+    let input = document.getElementById("keyInput").value.trim();
+    
+    // check Admin Key
+    if(input === ADMIN_KEY) {
+        showPanel("Admin Key - Vĩnh viễn");
+        return;
+    }
+    
+    // check 7-day Key
+    if(input === KEY_7DAY) {
+        let now = new Date();
+        if(now > expireDate) {
+            alert("Key 7 ngày đã hết hạn!");
+            return;
+        }
+        showPanel("Key 7 ngày còn hạn đến: " + expireDate.toLocaleDateString());
+        return;
+    }
+
+    // sai key
+    alert("Sai key!");
 }
 
-.box{
-margin-top:80px;
+// ==== SHOW PANEL ====
+function showPanel(info) {
+    document.getElementById("panel").style.display = "block";
+    document.getElementById("keyInfo").innerText = info;
 }
 
-input{
-padding:10px;
-border-radius:10px;
-border:none;
-outline:none;
-}
+// ==== GET KEY FUNCTION ====
+function getKey() {
+    let input = document.getElementById("keyInput").value.trim();
+    let keyToCopy = "";
+    
+    if(input === ADMIN_KEY) keyToCopy = ADMIN_KEY;
+    else if(input === KEY_7DAY) keyToCopy = KEY_7DAY;
+    else {
+        alert("Không có key hợp lệ để copy!");
+        return;
+    }
 
-button{
-padding:10px;
-margin:5px;
-border:none;
-border-radius:12px;
-background:#00ffcc;
-color:black;
-font-weight:bold;
+    navigator.clipboard.writeText(keyToCopy).then(() => {
+        alert("Key đã được copy: " + keyToCopy);
+    });
 }
+</script>
 
+</body>
+</html>
 .panel{
 display:none;
 }
